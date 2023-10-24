@@ -1,0 +1,55 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:5555
+      http:
+        
+processors:
+  batch:
+
+exporters:
+  # OTLP
+  otlp:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+  # Data sources: traces
+  zipkin:
+    endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
+  # Data sources: traces, metrics, logs
+  logging:
+    loglevel: debug
+  # Data sources: traces
+  jaeger:
+    endpoint: "jaeger-all-in-one:14250"
+    tls:
+      insecure: true
+  # Prometheus
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: "default"
+    resource_to_telemetry_conversion:
+      enabled: true
+  
+  prometheusremotewrite:
+    endpoint: 'http://prometheus:9090/api/v1/write'
+    tls:
+      insecure: true    
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check,pprof,zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, jaeger, otlp, zipkin]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, prometheus, prometheusremotewrite]

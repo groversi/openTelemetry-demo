@@ -1,0 +1,13 @@
+target/
+.idea
+otel-demo.iml
+etc/logs/
+/data/
+otel-demo.iml
+otelDemoGateway/otel-demo-gateway.iml
+playground/etc/logs/logger.log
+.DS_Store
+kafkaExampleConsumer/target
+kafkaExampleProducer/target
+otelDemoDatabase/target
+otelDemoGateway/target

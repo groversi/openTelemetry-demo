@@ -1,0 +1,15 @@
+server.port: 8083
+spring:
+  kafka:
+    consumer:
+      group-id: tpd-loggers
+      auto-offset-reset: earliest
+    # change this property if you are using your own
+    # Kafka cluster or your Docker IP is different
+    bootstrap-servers: kafka:9092
+
+tpd:
+  topic-name: advice-topic
+
+management.endpoint.prometheus.enabled: true
+management.metrics.export.prometheus.enabled: true

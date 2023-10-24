@@ -1,0 +1,153 @@
+version: '3.8'
+services:
+  #API application
+  otel-demo-gateway:
+    container_name: otel-demo-gateway
+    restart: on-failure
+    image: otel-demo-gateway:latest
+    build:
+      context: ../
+      dockerfile: ./otelDemoGateway/Dockerfile
+    ports:
+      - 8081:8081
+
+  #API application
+  otel-demo-database:
+    container_name: otel-demo-database
+    restart: on-failure
+    image: otel-demo-database:latest
+    build:
+      context: ../
+      dockerfile: ./otelDemoDatabase/Dockerfile
+    ports:
+      - 8082:8082
+
+  #Kafka application
+  kafka-example-consumer:
+    container_name: kafka-example-consumer
+    restart: on-failure
+    image: kafka-example-consumer:latest
+    build:
+      context: ../
+      dockerfile: ./kafkaExampleConsumer/Dockerfile
+    ports:
+      - 8083:8083
+    depends_on:
+      - kafka
+
+  #Kafka application
+  kafka-example-producer:
+    container_name: kafka-example-producer
+    restart: on-failure
+    image: kafka-example-producer:latest
+    build:
+      context: ../
+      dockerfile: ./kafkaExampleProducer/Dockerfile
+    ports:
+      - 8084:8084   
+    depends_on:
+      - kafka  
+
+  # Jaeger
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14250:14250"
+
+  # Zipkin
+  zipkin-all-in-one:
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+
+  # Prometheus
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ./etc/prometheus.yaml:/prometheus/prometheus.yml
+    command:
+      - '--web.enable-remote-write-receiver'
+    ports:
+      - "9090:9090"
+
+  # Grafana
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./etc/grafana-data:/etc/grafana/provisioning
+
+  # Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:0.40.0
+    command: ["--config=/etc/otel-collector-config.yml"]
+    volumes:
+      - ./etc/otel-collector-config.yaml:/etc/otel-collector-config.yml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      #- "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP http receiver
+      - "55679:55679" # zpages extension
+      - "5555:5555"
+    depends_on:
+      - jaeger-all-in-one
+      - zipkin-all-in-one
+      - prometheus
+      - tempo
+
+  # Grafana Tempo
+  tempo:
+    image: grafana/tempo:1.5.0
+    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+    container_name: tempo
+    hostname: tempo
+    volumes:
+      - ./etc/tempo-config.yaml:/etc/tempo.yaml
+      - ./etc/tempo-overrides.yaml:/etc/overrides.yaml
+      - ./etc/tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: wget --no-verbose --tries=1 --spider http://localhost:3200/status || exit 1
+
+  # Kafka
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+
+  # Logs
+  loki:
+    image: grafana/loki:2.2.0
+    command: -config.file=/etc/loki/loki-local.yaml
+    ports:
+      - "3101:3100" # loki needs to be exposed so it receives logs
+    volumes:
+      - ./etc/loki-local.yaml:/etc/loki/loki-local.yaml
+      - ./data/loki-data:/tmp/loki
+
+  promtail:
+    image: grafana/promtail:2.2.0
+    command: -config.file=/etc/promtail/promtail-local.yaml
+    volumes:
+      - ./etc/promtail-local.yaml:/etc/promtail/promtail-local.yaml
+      - ./etc/logs:/app/logs
