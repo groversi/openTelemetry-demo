@@ -9,6 +9,9 @@ processors:
   batch:
 
 exporters:
+  # Logs
+  file:
+    path: /etc/logs/logger.log
   # OTLP
   otlp:
     endpoint: "tempo:4317"
@@ -53,3 +56,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [logging, prometheus, prometheusremotewrite]
+    logs:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ file ]

@@ -11,3 +11,4 @@ kafkaExampleConsumer/target
 kafkaExampleProducer/target
 otelDemoDatabase/target
 otelDemoGateway/target
+/playground/etc/tempo-data/*

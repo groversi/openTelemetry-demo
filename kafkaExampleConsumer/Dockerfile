@@ -15,6 +15,8 @@ COPY ./agent/opentelemetry-javaagent.jar /app/bin
 
 CMD java -DOTEL.SERVICE.NAME=kafkaExampleConsumer \
          -DOTEL.TRACES.EXPORTER=otlp \
+         -DOTEL.LOGS.EXPORTER=otlp \
+         -DOTEL.METRICS.EXPORTER=otlp \
          -DOTEL.EXPORTER.OTLP.ENDPOINT=http://otel-collector:5555 \
          -DOTEL.EXPORTER.OTLP.PROTOCOL=grpc \
          -Dapplication.home=/app/bin/ \

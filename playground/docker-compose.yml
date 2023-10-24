@@ -44,9 +44,9 @@ services:
       context: ../
       dockerfile: ./kafkaExampleProducer/Dockerfile
     ports:
-      - 8084:8084   
+      - 8084:8084
     depends_on:
-      - kafka  
+      - kafka
 
   # Jaeger
   jaeger-all-in-one:
@@ -83,10 +83,11 @@ services:
 
   # Collector
   otel-collector:
-    image: otel/opentelemetry-collector:0.40.0
+    image: otel/opentelemetry-collector:0.61.0
     command: ["--config=/etc/otel-collector-config.yml"]
     volumes:
       - ./etc/otel-collector-config.yaml:/etc/otel-collector-config.yml
+      - ./etc/logs/:/etc/logs
     ports:
       - "1888:1888"   # pprof extension
       - "8888:8888"   # Prometheus metrics exposed by the collector
