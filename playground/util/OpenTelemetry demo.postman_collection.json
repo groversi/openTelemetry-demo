@@ -1,0 +1,269 @@
+{
+	"info": {
+		"_postman_id": "20a0e303-0574-4550-8f00-3f00dfe8f05e",
+		"name": "OpenTelemetry demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6722772"
+	},
+	"item": [
+		{
+			"name": "Otel gateway (Springboot Microservice)",
+			"item": [
+				{
+					"name": "Success",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "httpStatus",
+								"value": "200",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/otel-demo-gateway/v1/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"otel-demo-gateway",
+								"v1",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forbidden",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "httpStatus",
+								"value": "403",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/otel-demo-gateway/v1/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"otel-demo-gateway",
+								"v1",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unauthorized",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "httpStatus",
+								"value": "401",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/otel-demo-gateway/v1/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"otel-demo-gateway",
+								"v1",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Internal Server Error",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "httpStatus",
+								"value": "500",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8081/otel-demo-gateway/v1/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"otel-demo-gateway",
+								"v1",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Otel collector",
+			"item": [
+				{
+					"name": "Business Metrics (metrics)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"timeStamp\", new Date().getTime() * 1000000)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resourceMetrics\": [\n        {\n            \"resource\": {\n                \"attributes\": [\n                    {\n                        \"key\": \"service.name\",\n                        \"value\": {\n                            \"stringValue\": \"androidApp\"\n                        }\n                    }\n                ]\n            },\n            \"instrumentationLibraryMetrics\": [\n                {\n                    \"instrumentationLibrary\": {},\n                    \"metrics\": [\n                        {\n                            \"name\": \"clicks_on_product\",\n                            \"unit\": \"s\",\n                            \"summary\": {\n                                \"dataPoints\": [\n                                    {\n                                        \"attributes\": [\n                                            {\n                                                \"key\": \"produto\",\n                                                \"value\": {\n                                                    \"stringValue\": \"Samba\"\n                                                }\n                                            }\n                                        ],\n                                        \"startTimeUnixNano\": \"{{timeStamp}}\",\n                                        \"timeUnixNano\": \"{{timeStamp}}\",\n                                        \"count\": \"1\",\n                                        \"sum\": 1\n                                    }\n                                ]\n                            }\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4318/v1/metrics",
+							"host": [
+								"localhost"
+							],
+							"port": "4318",
+							"path": [
+								"v1",
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Business Metrics 2 (metrics)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"timeStamp\", new Date().getTime() * 1000000)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resourceMetrics\": [\n        {\n            \"resource\": {\n                \"attributes\": [\n                    {\n                        \"key\": \"service.name\",\n                        \"value\": {\n                            \"stringValue\": \"androidApp\"\n                        }\n                    }\n                ]\n            },\n            \"instrumentationLibraryMetrics\": [\n                {\n                    \"instrumentationLibrary\": {},\n                    \"metrics\": [\n                        {\n                            \"name\": \"clicks_on_product\",\n                            \"unit\": \"s\",\n                            \"summary\": {\n                                \"dataPoints\": [\n                                    {\n                                        \"attributes\": [\n                                            {\n                                                \"key\": \"produto\",\n                                                \"value\": {\n                                                    \"stringValue\": \"Gazelle\"\n                                                }\n                                            }\n                                        ],\n                                        \"startTimeUnixNano\": \"{{timeStamp}}\",\n                                        \"timeUnixNano\": \"{{timeStamp}}\",\n                                        \"count\": \"1\",\n                                        \"sum\": 1\n                                    }\n                                ]\n                            }\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4318/v1/metrics",
+							"host": [
+								"localhost"
+							],
+							"port": "4318",
+							"path": [
+								"v1",
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Device info (metrics)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"timeStamp\", new Date().getTime() * 1000000)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resourceMetrics\": [\n        {\n            \"resource\": {\n                \"attributes\": [\n                    {\n                        \"key\": \"service.name\",\n                        \"value\": {\n                            \"stringValue\": \"otel-demo\"\n                        }\n                    },\n                    {\n                        \"key\": \"host.name\",\n                        \"value\": {\n                            \"stringValue\": \"host.docker.internal\"\n                        }\n                    },\n                    {\n                        \"key\": \"job\",\n                        \"value\": {\n                            \"stringValue\": \"otel-demo\"\n                        }\n                    },\n                    {\n                        \"key\": \"instance\",\n                        \"value\": {\n                            \"stringValue\": \"host.docker.internal:8080\"\n                        }\n                    },\n                    {\n                        \"key\": \"port\",\n                        \"value\": {\n                            \"stringValue\": \"8080\"\n                        }\n                    },\n                    {\n                        \"key\": \"scheme\",\n                        \"value\": {\n                            \"stringValue\": \"http\"\n                        }\n                    }\n                ]\n            },\n            \"instrumentationLibraryMetrics\": [\n                {\n                    \"instrumentationLibrary\": {},\n                    \"metrics\": [\n                        {\n                            \"name\": \"client_info\",\n                            \"sum\": {\n                                \"dataPoints\": [\n                                    {\n                                        \"attributes\": [\n                                            {\n                                                \"key\": \"clientName\",\n                                                \"value\": {\n                                                    \"stringValue\": \"fulano\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"clientEmail\",\n                                                \"value\": {\n                                                    \"stringValue\": \"fulano@fulano.com\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"clientPhone\",\n                                                \"value\": {\n                                                    \"stringValue\": \"11 99999-9999\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"clientType\",\n                                                \"value\": {\n                                                    \"stringValue\": \"F\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"penumper\",\n                                                \"value\": {\n                                                    \"stringValue\": \"123123\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"nationality\",\n                                                \"value\": {\n                                                    \"stringValue\": \"Brasileiro\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"clientBranch\",\n                                                \"value\": {\n                                                    \"stringValue\": \"Curitiba\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"clientBranchCode\",\n                                                \"value\": {\n                                                    \"stringValue\": \"1234\"\n                                                }\n                                            }\n                                        ],\n                                        \"startTimeUnixNano\": \"{{timeStamp}}\",\n                                        \"timeUnixNano\": \"{{timeStamp}}\",\n                                        \"asDouble\": 1\n                                    }\n                                ],\n                                \"aggregationTemporality\": \"AGGREGATION_TEMPORALITY_CUMULATIVE\",\n                                \"isMonotonic\": true\n                            }\n                        },\n                                                {\n                            \"name\": \"device_info\",\n                            \"sum\": {\n                                \"dataPoints\": [\n                                    {\n                                        \"attributes\": [\n                                            {\n                                                \"key\": \"clientOsName\",\n                                                \"value\": {\n                                                    \"stringValue\": \"IOS\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"latitude\",\n                                                \"value\": {\n                                                    \"stringValue\": \"-34.6083\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"longitude\",\n                                                \"value\": {\n                                                    \"stringValue\": \"-58.3712\"\n                                                }\n                                            },\n                                            {\n                                                \"key\": \"brand\",\n                                                \"value\": {\n                                                    \"stringValue\": \"Apple\"\n                                                }\n                                            }\n                                        ],\n                                        \"startTimeUnixNano\": \"{{timeStamp}}\",\n                                        \"timeUnixNano\": \"{{timeStamp}}\",\n                                        \"asDouble\": 1\n                                    }\n                                ],\n                                \"aggregationTemporality\": \"AGGREGATION_TEMPORALITY_CUMULATIVE\",\n                                \"isMonotonic\": true\n                            }\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4318/v1/metrics",
+							"host": [
+								"localhost"
+							],
+							"port": "4318",
+							"path": [
+								"v1",
+								"metrics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log and Trace (logs and trace)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"resourceLogs\": [\n        {\n            \"resource\": {\n                \"attributes\": [\n                    {\n                        \"key\": \"otel.demo.logs\",\n                        \"value\": {\n                            \"stringValue\": \"testHost\"\n                        }\n                    }\n                ]\n            },\n            \"instrumentationLibraryLogs\": [\n                {\n                    \"instrumentationLibrary\": {\n                        \"name\": \"name\",\n                        \"version\": \"version\"\n                    },\n                    \"logs\": [\n                        {\n                            \"name\": \"example-application\",\n                            \"severityText\": \"ERROR\",\n                            \"body\": {},\n                            \"traceId\": \"\",\n                            \"spanId\": \"\"\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4318/v1/logs",
+							"host": [
+								"localhost"
+							],
+							"port": "4318",
+							"path": [
+								"v1",
+								"logs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
